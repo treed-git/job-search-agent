@@ -4,6 +4,11 @@
 {% block content %}
 <h2 class="mb-2">My Resume</h2>
 
+<!-- Debug: remove after confirming fix -->
+<div class="card" style="background:#fef9c3;border-color:#fde68a;font-size:0.8rem;">
+    <p style="color:#92400e;">Debug: has_resume={{ has_resume }}, resume_name={{ resume.name if resume else 'None' }}, server=patched-v3</p>
+</div>
+
 {% if message %}
 <div class="card" style="background:#dcfce7;border-color:#bbf7d0;">
     <p style="color:#166534;">{{ message }}</p>
