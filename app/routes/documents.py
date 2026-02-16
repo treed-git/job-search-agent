@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+import io
 import json
 import logging
+import re
 from pathlib import Path
 
+from docx import Document as DocxDocument
+from docx.shared import Pt, Inches
 from fastapi import APIRouter, Request
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse
 from fastapi.templating import Jinja2Templates
 
 from app.config import settings, BASE_DIR
@@ -65,4 +69,97 @@ async def view_cover_letter(request: Request, job_id: int):
     return templates.TemplateResponse(
         "document.html",
         {"request": request, "job": job, "doc_type": "cover_letter", "content": job.cover_letter},
+    )
+
+
+def _build_docx(text: str, title: str) -> io.BytesIO:
+    """Convert plain/markdown text into a formatted Word document."""
+    doc = DocxDocument()
+
+    style = doc.styles["Normal"]
+    style.font.name = "Calibri"
+    style.font.size = Pt(11)
+    style.paragraph_format.space_after = Pt(4)
+
+    section = doc.sections[0]
+    section.top_margin = Inches(1)
+    section.bottom_margin = Inches(1)
+    section.left_margin = Inches(1)
+    section.right_margin = Inches(1)
+
+    for line in text.splitlines():
+        stripped = line.strip()
+
+        # Markdown-style headings
+        if stripped.startswith("### "):
+            p = doc.add_paragraph()
+            p.style = doc.styles["Heading 3"]
+            p.text = stripped[4:]
+        elif stripped.startswith("## "):
+            p = doc.add_paragraph()
+            p.style = doc.styles["Heading 2"]
+            p.text = stripped[3:]
+        elif stripped.startswith("# "):
+            p = doc.add_paragraph()
+            p.style = doc.styles["Heading 1"]
+            p.text = stripped[2:]
+        # ALL-CAPS section headers (common in generated resumes)
+        elif stripped.isupper() and 3 <= len(stripped) <= 60:
+            p = doc.add_paragraph()
+            p.style = doc.styles["Heading 2"]
+            p.text = stripped.title()
+        # Bullet points
+        elif stripped.startswith(("- ", "* ", "• ")):
+            doc.add_paragraph(stripped[2:], style="List Bullet")
+        # Horizontal rule / separator
+        elif re.fullmatch(r"[-=_*]{3,}", stripped):
+            continue
+        # Blank line
+        elif not stripped:
+            doc.add_paragraph("")
+        else:
+            # Strip bold markdown markers for body text
+            clean = re.sub(r"\*\*(.+?)\*\*", r"\1", stripped)
+            doc.add_paragraph(clean)
+
+    buf = io.BytesIO()
+    doc.save(buf)
+    buf.seek(0)
+    return buf
+
+
+def _safe_filename(text: str) -> str:
+    """Create a filesystem-safe string from arbitrary text."""
+    return re.sub(r"[^a-zA-Z0-9_-]", "_", text)[:60]
+
+
+@router.get("/jobs/{job_id}/resume/download")
+async def download_resume(job_id: int):
+    """Download tailored resume as a Word document."""
+    job = await get_job(job_id)
+    if not job or not job.tailored_resume:
+        return RedirectResponse(f"/jobs/{job_id}", status_code=302)
+
+    buf = _build_docx(job.tailored_resume, f"Resume – {job.title}")
+    filename = f"Resume_{_safe_filename(job.company)}_{_safe_filename(job.title)}.docx"
+    return StreamingResponse(
+        buf,
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
+@router.get("/jobs/{job_id}/cover-letter/download")
+async def download_cover_letter(job_id: int):
+    """Download cover letter as a Word document."""
+    job = await get_job(job_id)
+    if not job or not job.cover_letter:
+        return RedirectResponse(f"/jobs/{job_id}", status_code=302)
+
+    buf = _build_docx(job.cover_letter, f"Cover Letter – {job.title}")
+    filename = f"Cover_Letter_{_safe_filename(job.company)}_{_safe_filename(job.title)}.docx"
+    return StreamingResponse(
+        buf,
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
     )
