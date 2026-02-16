@@ -2,7 +2,7 @@
     "name": "Job Search Agent",
     "image": "mcr.microsoft.com/devcontainers/python:3.12",
     "postCreateCommand": "pip install -q . && cp -n .env.example .env 2>/dev/null; true",
-    "postStartCommand": "bash -c 'cd /workspaces/job-search-agent && nohup python -m app.main > /tmp/app.log 2>&1 & disown'",
+    "postStartCommand": "bash -c 'cd /workspaces/job-search-agent && nohup uvicorn app.main:app --host 0.0.0.0 --port 8000 > /tmp/app.log 2>&1 & disown'",
     "forwardPorts": [8000],
     "portsAttributes": {
         "8000": {
