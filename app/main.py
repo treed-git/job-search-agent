@@ -23,6 +23,15 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Job Search Agent", lifespan=lifespan)
+
+
+@app.middleware("http")
+async def no_cache(request, call_next):
+    response = await call_next(request)
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    return response
+
+
 app.include_router(jobs.router)
 app.include_router(documents.router)
 app.include_router(resume.router)
