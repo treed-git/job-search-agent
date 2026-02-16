@@ -11,21 +11,34 @@ Scrapes job postings from multiple boards, lets you review them in a web dashboa
 - **AI cover letters** — Drafts a concise, role-specific cover letter
 - **Fallback mode** — Works without an API key using keyword matching and templates
 
-## Quick Start
+## Quick Start (Easy)
 
-### 1. Install dependencies
+Just run the startup script — it handles everything:
+
+```bash
+./start.sh
+```
+
+It will:
+1. Ask for your OpenAI API key (first time only)
+2. Install dependencies automatically
+3. Start the app
+
+Then open **http://127.0.0.1:8000** in your browser.
+
+Before running, edit `data/sample_resume.json` with your real resume info.
+
+## Manual Setup (Advanced)
+
+If you prefer to set things up yourself:
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 pip install .
-```
-
-### 2. Configure environment
-
-```bash
 cp .env.example .env
-# Edit .env with your API keys and preferences
+# Edit .env with your OPENAI_API_KEY
+python -m app.main
 ```
 
 **Required for AI features:**
@@ -33,23 +46,6 @@ cp .env.example .env
 
 **Optional (improves scraping):**
 - `ADZUNA_APP_ID` / `ADZUNA_APP_KEY` — free at https://developer.adzuna.com/
-
-### 3. Add your resume
-
-Edit `data/sample_resume.json` with your real information. The JSON structure includes:
-- Contact info (name, email, phone, location)
-- Professional summary
-- Work experience with bullet points
-- Education
-- Skills and certifications
-
-### 4. Run the app
-
-```bash
-python -m app.main
-```
-
-Open http://127.0.0.1:8000 in your browser.
 
 ## Usage
 
