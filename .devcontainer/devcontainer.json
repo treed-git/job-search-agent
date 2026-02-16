@@ -2,7 +2,7 @@
     "name": "Job Search Agent",
     "image": "mcr.microsoft.com/devcontainers/python:3.12",
     "postCreateCommand": "pip install -q . && cp -n .env.example .env 2>/dev/null; true",
-    "postStartCommand": "python -m app.main",
+    "postStartCommand": "nohup python -m app.main > /tmp/app.log 2>&1 &",
     "forwardPorts": [8000],
     "portsAttributes": {
         "8000": {
