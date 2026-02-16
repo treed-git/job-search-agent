@@ -76,7 +76,7 @@ async def upload_resume(request: Request, file: UploadFile = File(...)):
         if not raw_text.strip():
             return RedirectResponse(
                 "/resume?error=Could not extract text from the file. Try a different format.",
-                status_code=302,
+                status_code=303,
             )
 
         # Use AI to parse into structured resume
@@ -86,8 +86,20 @@ async def upload_resume(request: Request, file: UploadFile = File(...)):
         save_resume(resume)
 
         logger.info(f"Resume uploaded and parsed: {resume.name}")
-        return RedirectResponse("/resume?message=Resume uploaded and parsed successfully!", status_code=302)
+
+        # Render page directly with the parsed resume so it displays
+        # immediately, rather than redirecting and re-loading from disk.
+        return templates.TemplateResponse(
+            "resume.html",
+            {
+                "request": request,
+                "resume": resume,
+                "has_resume": True,
+                "message": "Resume uploaded and parsed successfully!",
+                "error": "",
+            },
+        )
 
     except Exception as e:
         logger.error(f"Resume upload failed: {e}")
-        return RedirectResponse(f"/resume?error=Failed to parse resume: {e}", status_code=302)
+        return RedirectResponse(f"/resume?error=Failed to parse resume: {e}", status_code=303)
