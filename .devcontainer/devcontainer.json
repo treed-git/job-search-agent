@@ -1,18 +1,15 @@
 {
     "name": "Job Search Agent",
     "image": "mcr.microsoft.com/devcontainers/python:3.12",
-    "postCreateCommand": "pip install -q . && cp -n .env.example .env 2>/dev/null; true",
-    "postStartCommand": "echo 'Server starting...' && cd /workspaces/job-search-agent && uvicorn app.main:app --host 0.0.0.0 --port 8000",
+    "postCreateCommand": "pip install . && cp -n .env.example .env 2>/dev/null || true",
+    "postAttachCommand": {
+        "server": "cd /workspaces/job-search-agent && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    },
     "forwardPorts": [8000],
     "portsAttributes": {
         "8000": {
             "label": "Job Search Agent",
             "onAutoForward": "openBrowser"
-        }
-    },
-    "customizations": {
-        "codespaces": {
-            "openFiles": []
         }
     }
 }
