@@ -8,7 +8,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
 from app.database import init_db
-from app.routes import jobs, documents
+from app.routes import jobs, documents, resume
 
 logging.basicConfig(
     level=logging.INFO,
@@ -25,6 +25,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Job Search Agent", lifespan=lifespan)
 app.include_router(jobs.router)
 app.include_router(documents.router)
+app.include_router(resume.router)
 
 
 def run():
