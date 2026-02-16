@@ -85,7 +85,9 @@ def extract_text(filename: str, file_bytes: bytes) -> str:
 
 async def parse_resume_with_ai(raw_text: str) -> Resume:
     """Use OpenAI to extract structured resume data from raw text."""
-    if not settings.openai_api_key:
+    key = settings.openai_api_key
+    if not key or key.startswith("PASTE") or key in ("your-api-key", "sk-xxx"):
+        logger.warning("No valid OpenAI API key configured, using fallback parser")
         return _fallback_parse(raw_text)
 
     client = AsyncOpenAI(api_key=settings.openai_api_key)

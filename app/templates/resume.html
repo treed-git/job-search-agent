@@ -36,10 +36,10 @@
     <h3>Current Resume</h3>
     <div class="mt-2">
         <div style="display:grid;grid-template-columns:auto 1fr;gap:0.25rem 1rem;font-size:0.9rem;">
-            <strong>Name:</strong><span>{{ resume.name }}</span>
-            <strong>Email:</strong><span>{{ resume.email }}</span>
-            <strong>Phone:</strong><span>{{ resume.phone }}</span>
-            <strong>Location:</strong><span>{{ resume.location }}</span>
+            <strong>Name:</strong><span>{{ resume.name or "—" }}</span>
+            <strong>Email:</strong><span>{{ resume.email or "—" }}</span>
+            <strong>Phone:</strong><span>{{ resume.phone or "—" }}</span>
+            <strong>Location:</strong><span>{{ resume.location or "—" }}</span>
         </div>
 
         {% if resume.summary %}

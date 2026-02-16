@@ -28,7 +28,8 @@ def _load_current_resume() -> Resume | None:
         with open(path) as f:
             data = json.load(f)
         return Resume(**data)
-    except Exception:
+    except Exception as e:
+        logger.error(f"Failed to load resume from {path}: {e}")
         return None
 
 
@@ -36,7 +37,7 @@ def _load_current_resume() -> Resume | None:
 async def resume_page(request: Request, message: str = "", error: str = ""):
     """Resume upload and preview page."""
     resume = _load_current_resume()
-    has_resume = resume is not None and bool(resume.name)
+    has_resume = resume is not None
     return templates.TemplateResponse(
         "resume.html",
         {
