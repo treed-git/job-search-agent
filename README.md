@@ -9,28 +9,48 @@ Scrapes job postings from multiple boards, lets you review them in a web dashboa
 - **One-click approve** — Approve a job and instantly generate documents
 - **AI resume tailoring** — Rewrites your resume to match the job description's terminology
 - **AI cover letters** — Drafts a concise, role-specific cover letter
+- **Resume upload** — Upload a PDF or Word doc, AI extracts your info automatically
 - **Fallback mode** — Works without an API key using keyword matching and templates
 
-## Quick Start (Easy)
+## Getting Started (No Install Needed)
 
-Just run the startup script — it handles everything:
+You can run this app entirely in your browser using GitHub Codespaces — nothing to install on your computer.
+
+### Step 1: Open in Codespaces
+
+From the GitHub repo page, click the green **"Code"** button, then the **"Codespaces"** tab, then **"Create codespace on main"**. Wait a minute or two for it to set up.
+
+The app will start automatically and a browser tab will open with the dashboard.
+
+### Step 2: Add your OpenAI API key
+
+1. In the dashboard, click **Settings** in the top navigation bar
+2. Paste your OpenAI API key (get one at [platform.openai.com/api-keys](https://platform.openai.com/api-keys))
+3. Click **Save Settings**
+
+### Step 3: Upload your resume
+
+1. Click **My Resume** in the top navigation bar
+2. Click the file picker and choose your resume (PDF, Word doc, or text file)
+3. Click **Upload & Parse** — AI reads your file and extracts your info
+
+### Step 4: Find jobs
+
+1. Go to the **Dashboard** (click the logo or "Dashboard" link)
+2. Enter job keywords (e.g. "marketing manager") and a location (e.g. "Remote")
+3. Click **Search & Scrape**
+4. Click into any job to read the full description
+5. Click **Approve & Generate Resume + Cover Letter** to create tailored documents
+
+## Running Locally (Advanced)
+
+If you prefer to run on your own computer:
 
 ```bash
 ./start.sh
 ```
 
-It will:
-1. Ask for your OpenAI API key (first time only)
-2. Install dependencies automatically
-3. Start the app
-
-Then open **http://127.0.0.1:8000** in your browser.
-
-Before running, edit `data/sample_resume.json` with your real resume info.
-
-## Manual Setup (Advanced)
-
-If you prefer to set things up yourself:
+Or manually:
 
 ```bash
 python -m venv .venv
@@ -41,44 +61,7 @@ cp .env.example .env
 python -m app.main
 ```
 
-**Required for AI features:**
-- `OPENAI_API_KEY` — get one at https://platform.openai.com/api-keys
-
-**Optional (improves scraping):**
-- `ADZUNA_APP_ID` / `ADZUNA_APP_KEY` — free at https://developer.adzuna.com/
-
-## Usage
-
-1. **Scrape jobs** — Enter keywords and location on the dashboard, then click "Search & Scrape"
-2. **Review** — Click into any job to read the full description
-3. **Approve** — Click "Approve & Generate Resume + Cover Letter" to create tailored documents
-4. **Reject** — Mark jobs you're not interested in to keep your list clean
-5. **Filter** — Use the status and search filters to focus on what matters
-
-## Project Structure
-
-```
-app/
-├── main.py              # FastAPI entry point
-├── config.py            # Settings (loaded from .env)
-├── database.py          # SQLite via aiosqlite
-├── models.py            # Pydantic data models
-├── scrapers/
-│   ├── base.py          # Base scraper with rate limiting
-│   ├── indeed.py        # Indeed scraper
-│   ├── linkedin.py      # LinkedIn public listings
-│   ├── glassdoor.py     # Glassdoor scraper
-│   └── adzuna.py        # Adzuna API client
-├── ai/
-│   ├── resume_tailor.py # AI resume tailoring
-│   └── cover_letter.py  # AI cover letter drafting
-├── routes/
-│   ├── jobs.py          # Job listing & scraping routes
-│   └── documents.py     # Document generation routes
-└── templates/           # Jinja2 HTML templates
-data/
-└── sample_resume.json   # Your resume (edit this)
-```
+Then open http://127.0.0.1:8000 in your browser.
 
 ## Notes
 
