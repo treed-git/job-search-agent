@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Job Search Agent{% endblock %}
+
+{% block content %}
+<h2 class="mb-2">Job Dashboard</h2>
+
+<!-- Scrape Form -->
+<div class="card mb-2">
+    <h3 style="margin-bottom:0.75rem;">Scrape New Jobs</h3>
+    <form method="post" action="/scrape">
+        <div class="form-row">
+            <input type="text" name="keywords" placeholder="Keywords (e.g. python developer)" style="flex:1;min-width:200px;">
+            <input type="text" name="location" placeholder="Location (e.g. Remote)" style="flex:1;min-width:200px;">
+            <button type="submit" class="btn btn-primary">Search &amp; Scrape</button>
+        </div>
+    </form>
+</div>
+
+<!-- Filters -->
+<div class="card mb-2">
+    <form method="get" action="/">
+        <div class="form-row">
+            <select name="status">
+                <option value="">All statuses</option>
+                {% for s in statuses %}
+                <option value="{{ s }}" {% if s == current_status %}selected{% endif %}>{{ s|title }}</option>
+                {% endfor %}
+            </select>
+            <input type="text" name="search" placeholder="Search jobs..." value="{{ search }}">
+            <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+            <a href="/" class="btn btn-sm" style="background:#e2e8f0;">Clear</a>
+        </div>
+    </form>
+</div>
+
+<!-- Job List -->
+{% if jobs %}
+<p class="text-muted text-sm mb-2">{{ jobs|length }} job{{ 's' if jobs|length != 1 }} found</p>
+{% for job in jobs %}
+<div class="card" style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;">
+    <div style="flex:1;">
+        <a href="/jobs/{{ job.id }}" style="font-weight:600;font-size:1.05rem;text-decoration:none;color:var(--primary);">
+            {{ job.title }}
+        </a>
+        <div class="text-sm text-muted mt-1">
+            {{ job.company }}{% if job.location %} &middot; {{ job.location }}{% endif %}{% if job.salary %} &middot; {{ job.salary }}{% endif %}
+        </div>
+        {% if job.description %}
+        <p class="text-sm mt-1" style="color:var(--text);">{{ job.description[:200] }}{% if job.description|length > 200 %}…{% endif %}</p>
+        {% endif %}
+        <div class="mt-1 text-sm text-muted">
+            <span class="badge badge-{{ job.status.value }}">{{ job.status.value }}</span>
+            &middot; {{ job.source }}
+            {% if job.date_posted %}&middot; Posted {{ job.date_posted[:10] }}{% endif %}
+        </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.4rem;min-width:fit-content;">
+        <a href="/jobs/{{ job.id }}" class="btn btn-primary btn-sm">View</a>
+        {% if job.tailored_resume %}
+        <a href="/jobs/{{ job.id }}/resume" class="btn btn-success btn-sm">Resume</a>
+        {% endif %}
+    </div>
+</div>
+{% endfor %}
+{% else %}
+<div class="card" style="text-align:center;padding:3rem;">
+    <p class="text-muted">No jobs found. Use the scraper above to find jobs, or adjust your filters.</p>
+</div>
+{% endif %}
+{% endblock %}

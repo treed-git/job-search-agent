@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}{{ "Resume" if doc_type == "resume" else "Cover Letter" }} — {{ job.title }}{% endblock %}
+
+{% block content %}
+<a href="/jobs/{{ job.id }}" style="text-decoration:none;color:var(--text-muted);font-size:0.9rem;">&larr; Back to {{ job.title }}</a>
+
+<div class="card mt-2">
+    <h2>{{ "Tailored Resume" if doc_type == "resume" else "Cover Letter" }}</h2>
+    <p class="text-muted text-sm">For: {{ job.title }} at {{ job.company }}</p>
+</div>
+
+<div class="card">
+    <pre>{{ content or "No document generated yet." }}</pre>
+</div>
+{% endblock %}

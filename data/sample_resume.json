@@ -1,0 +1,78 @@
+{
+    "name": "Jane Doe",
+    "email": "jane.doe@email.com",
+    "phone": "(555) 123-4567",
+    "location": "San Francisco, CA",
+    "summary": "Software engineer with 5+ years of experience building scalable backend systems, REST APIs, and data pipelines. Passionate about clean code, developer tooling, and solving complex problems.",
+    "experience": [
+        {
+            "title": "Senior Software Engineer",
+            "company": "TechCorp Inc.",
+            "location": "San Francisco, CA",
+            "start_date": "2022-01",
+            "end_date": "Present",
+            "bullets": [
+                "Designed and implemented microservices architecture serving 10M+ requests/day using Python and FastAPI.",
+                "Led migration from monolithic application to event-driven architecture, reducing latency by 40%.",
+                "Built CI/CD pipelines with GitHub Actions, improving deployment frequency from weekly to multiple times daily.",
+                "Mentored 3 junior engineers and conducted technical interviews."
+            ]
+        },
+        {
+            "title": "Software Engineer",
+            "company": "DataFlow Systems",
+            "location": "Austin, TX",
+            "start_date": "2019-06",
+            "end_date": "2021-12",
+            "bullets": [
+                "Developed ETL pipelines processing 500GB+ of data daily using Python, Apache Airflow, and PostgreSQL.",
+                "Built RESTful APIs consumed by 20+ internal and external clients.",
+                "Improved query performance by 60% through database indexing and query optimization.",
+                "Collaborated with data science team to deploy ML models to production."
+            ]
+        },
+        {
+            "title": "Junior Developer",
+            "company": "StartupXYZ",
+            "location": "Remote",
+            "start_date": "2018-01",
+            "end_date": "2019-05",
+            "bullets": [
+                "Built full-stack features using React and Django for a SaaS platform with 50K+ users.",
+                "Wrote unit and integration tests achieving 90% code coverage.",
+                "Participated in agile sprints and daily standups."
+            ]
+        }
+    ],
+    "education": [
+        {
+            "degree": "B.S. Computer Science",
+            "school": "University of California, Berkeley",
+            "graduation_date": "2017",
+            "gpa": "3.7"
+        }
+    ],
+    "skills": [
+        "Python",
+        "JavaScript",
+        "TypeScript",
+        "SQL",
+        "FastAPI",
+        "Django",
+        "React",
+        "PostgreSQL",
+        "Redis",
+        "Docker",
+        "Kubernetes",
+        "AWS",
+        "Git",
+        "CI/CD",
+        "REST APIs",
+        "Microservices",
+        "Apache Airflow",
+        "Linux"
+    ],
+    "certifications": [
+        "AWS Certified Solutions Architect – Associate"
+    ]
+}
