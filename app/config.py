@@ -30,6 +30,13 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
+
+def reload_settings() -> None:
+    """Reload environment-backed settings into the shared settings object."""
+    refreshed = Settings()
+    for key, value in refreshed.model_dump().items():
+        setattr(settings, key, value)
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
 DATA_DIR.mkdir(exist_ok=True)

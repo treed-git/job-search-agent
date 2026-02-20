@@ -7,7 +7,7 @@ from fastapi import APIRouter, Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
-from app.config import BASE_DIR
+from app.config import BASE_DIR, reload_settings
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -80,6 +80,7 @@ async def save_settings(
     env["RESUME_PATH"] = "data/sample_resume.json"
 
     _write_env(env)
+    reload_settings()
 
     logger.info("Settings saved via web UI")
-    return RedirectResponse("/settings?message=Settings saved! You may need to restart the app for API key changes to take effect.", status_code=302)
+    return RedirectResponse("/settings?message=Settings saved! Changes are active now.", status_code=302)
