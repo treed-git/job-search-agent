@@ -8,16 +8,27 @@ echo ""
 
 # Create .env if it doesn't exist
 if [ ! -f .env ]; then
-    echo "First-time setup! I need your OpenAI API key."
-    echo "You can find it at: https://platform.openai.com/api-keys"
-    echo ""
-    read -p "Paste your OpenAI API key: " api_key
-    echo ""
-
     cp .env.example .env
-    sed -i "s|sk-your-key-here|$api_key|" .env
-    echo "Saved! Your key is stored in .env (this file is git-ignored and private)."
-    echo ""
+
+    if [ -t 0 ]; then
+        echo "First-time setup! I need your OpenAI API key."
+        echo "You can find it at: https://platform.openai.com/api-keys"
+        echo ""
+        read -p "Paste your OpenAI API key (or press Enter to skip): " api_key
+        echo ""
+
+        if [ -n "$api_key" ]; then
+            sed -i "s|sk-your-key-here|$api_key|" .env
+            echo "Saved! Your key is stored in .env (this file is git-ignored and private)."
+        else
+            echo "No API key entered. Continuing in fallback mode."
+        fi
+        echo ""
+    else
+        echo "No .env file found and no interactive terminal detected."
+        echo "Created .env from .env.example and continuing in fallback mode."
+        echo ""
+    fi
 else
     echo "Found existing .env file - using saved settings."
     echo ""
