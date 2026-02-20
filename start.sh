@@ -47,9 +47,10 @@ pip install -q . 2>/dev/null
 
 echo ""
 echo "Starting the app..."
+PORT="${PORT:-8000}"
 echo "Open this link in your browser:"
 echo ""
-echo "  http://127.0.0.1:8000"
+echo "  http://127.0.0.1:${PORT}"
 echo ""
 echo "Press Ctrl+C to stop the app."
 echo ""
