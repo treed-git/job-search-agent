@@ -34,6 +34,8 @@ async def tailor_resume(resume: Resume, job_title: str, job_description: str) ->
 
     client = AsyncOpenAI(api_key=settings.openai_api_key)
 
+    resume_content = resume.raw_text if resume.raw_text else json.dumps(resume.model_dump(), indent=2)
+
     user_prompt = f"""\
 ## Target Job
 **Title:** {job_title}
@@ -41,8 +43,8 @@ async def tailor_resume(resume: Resume, job_title: str, job_description: str) ->
 **Description:**
 {job_description}
 
-## Candidate Resume (raw data)
-{json.dumps(resume.model_dump(), indent=2)}
+## Candidate Resume
+{resume_content}
 
 Please produce a tailored resume in Markdown format.\
 """

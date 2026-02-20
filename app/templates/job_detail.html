@@ -55,29 +55,23 @@
 <!-- Generated Documents -->
 {% if job.tailored_resume %}
 <div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center;" class="no-print">
-        <h3>Tailored Resume</h3>
-        <div style="display:flex;gap:0.5rem;">
-            <a href="/jobs/{{ job.id }}/resume/download" class="btn btn-primary btn-sm">Download Word</a>
-            <button onclick="window.print()" class="btn btn-secondary btn-sm">Print</button>
-        </div>
-    </div>
-    <h3 class="print-only" style="display:none;">Tailored Resume</h3>
+    <h3>Tailored Resume</h3>
     <pre class="mt-1">{{ job.tailored_resume }}</pre>
+    <div class="no-print" style="display:flex;gap:0.75rem;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);">
+        <a href="/jobs/{{ job.id }}/resume/download" class="btn btn-primary">&#8595; Download Word</a>
+        <button onclick="window.print()" class="btn btn-secondary">&#128438; Print</button>
+    </div>
 </div>
 {% endif %}
 
 {% if job.cover_letter %}
 <div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center;" class="no-print">
-        <h3>Cover Letter</h3>
-        <div style="display:flex;gap:0.5rem;">
-            <a href="/jobs/{{ job.id }}/cover-letter/download" class="btn btn-primary btn-sm">Download Word</a>
-            <button onclick="window.print()" class="btn btn-secondary btn-sm">Print</button>
-        </div>
-    </div>
-    <h3 class="print-only" style="display:none;">Cover Letter</h3>
+    <h3>Cover Letter</h3>
     <pre class="mt-1">{{ job.cover_letter }}</pre>
+    <div class="no-print" style="display:flex;gap:0.75rem;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);">
+        <a href="/jobs/{{ job.id }}/cover-letter/download" class="btn btn-primary">&#8595; Download Word</a>
+        <button onclick="window.print()" class="btn btn-secondary">&#128438; Print</button>
+    </div>
 </div>
 {% endif %}
 {% endblock %}

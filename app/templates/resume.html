@@ -4,11 +4,6 @@
 {% block content %}
 <h2 class="mb-2">My Resume</h2>
 
-<!-- Debug: remove after confirming fix -->
-<div class="card" style="background:#fef9c3;border-color:#fde68a;font-size:0.8rem;">
-    <p style="color:#92400e;">Debug: has_resume={{ has_resume }}, resume_name={{ resume.name if resume else 'None' }}, server=patched-v3</p>
-</div>
-
 {% if message %}
 <div class="card" style="background:#dcfce7;border-color:#bbf7d0;">
     <p style="color:#166534;">{{ message }}</p>
@@ -39,6 +34,9 @@
 {% if has_resume %}
 <div class="card">
     <h3>Current Resume</h3>
+    {% if resume.raw_text %}
+    <pre class="mt-2">{{ resume.raw_text }}</pre>
+    {% else %}
     <div class="mt-2">
         <div style="display:grid;grid-template-columns:auto 1fr;gap:0.25rem 1rem;font-size:0.9rem;">
             <strong>Name:</strong><span>{{ resume.name or "—" }}</span>
@@ -46,64 +44,9 @@
             <strong>Phone:</strong><span>{{ resume.phone or "—" }}</span>
             <strong>Location:</strong><span>{{ resume.location or "—" }}</span>
         </div>
-
-        {% if resume.summary %}
-        <div class="mt-2">
-            <strong>Summary</strong>
-            <p class="text-sm mt-1">{{ resume.summary }}</p>
-        </div>
-        {% endif %}
-
-        {% if resume.skills %}
-        <div class="mt-2">
-            <strong>Skills</strong>
-            <div class="mt-1" style="display:flex;flex-wrap:wrap;gap:0.4rem;">
-                {% for skill in resume.skills %}
-                <span style="background:#e0e7ff;color:#3730a3;padding:0.15rem 0.5rem;border-radius:999px;font-size:0.8rem;">{{ skill }}</span>
-                {% endfor %}
-            </div>
-        </div>
-        {% endif %}
-
-        {% if resume.experience %}
-        <div class="mt-2">
-            <strong>Experience</strong>
-            {% for exp in resume.experience %}
-            <div class="mt-1" style="padding:0.75rem;background:var(--bg);border-radius:6px;margin-bottom:0.5rem;">
-                <div style="font-weight:600;">{{ exp.title }}</div>
-                <div class="text-sm text-muted">{{ exp.company }}{% if exp.location %} &middot; {{ exp.location }}{% endif %} &middot; {{ exp.start_date }} – {{ exp.end_date }}</div>
-                {% if exp.bullets %}
-                <ul class="text-sm mt-1" style="margin-left:1.25rem;">
-                    {% for bullet in exp.bullets %}
-                    <li>{{ bullet }}</li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-
-        {% if resume.education %}
-        <div class="mt-2">
-            <strong>Education</strong>
-            {% for edu in resume.education %}
-            <div class="text-sm mt-1">{{ edu.degree }} — {{ edu.school }}{% if edu.graduation_date %} ({{ edu.graduation_date }}){% endif %}</div>
-            {% endfor %}
-        </div>
-        {% endif %}
-
-        {% if resume.certifications %}
-        <div class="mt-2">
-            <strong>Certifications</strong>
-            <ul class="text-sm mt-1" style="margin-left:1.25rem;">
-                {% for cert in resume.certifications %}
-                <li>{{ cert }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-        {% endif %}
+        {% if resume.summary %}<p class="text-sm mt-2">{{ resume.summary }}</p>{% endif %}
     </div>
+    {% endif %}
 </div>
 
 <div class="card">

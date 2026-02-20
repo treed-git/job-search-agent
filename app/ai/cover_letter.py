@@ -35,6 +35,8 @@ async def draft_cover_letter(
 
     client = AsyncOpenAI(api_key=settings.openai_api_key)
 
+    resume_content = resume.raw_text if resume.raw_text else json.dumps(resume.model_dump(), indent=2)
+
     user_prompt = f"""\
 ## Target Position
 **Title:** {job_title}
@@ -44,7 +46,7 @@ async def draft_cover_letter(
 {job_description}
 
 ## Candidate Background
-{json.dumps(resume.model_dump(), indent=2)}
+{resume_content}
 
 Please write a concise, tailored cover letter.\
 """

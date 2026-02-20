@@ -82,6 +82,9 @@ async def upload_resume(request: Request, file: UploadFile = File(...)):
         # Use AI to parse into structured resume
         resume = await parse_resume_with_ai(raw_text)
 
+        # Always preserve the verbatim extracted text
+        resume.raw_text = raw_text
+
         # Save to disk
         save_resume(resume)
 

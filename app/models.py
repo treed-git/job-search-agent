@@ -42,6 +42,7 @@ class Resume(BaseModel):
     education: list[Education] = []
     skills: list[str] = []
     certifications: list[str] = []
+    raw_text: str = ""  # verbatim text extracted from the uploaded file
 
 
 class Experience(BaseModel):
