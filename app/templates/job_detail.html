@@ -57,7 +57,10 @@
 <div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center;">
         <h3>Tailored Resume</h3>
-        <a href="/jobs/{{ job.id }}/resume/download" class="btn btn-primary btn-sm">Download Word</a>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+            <a href="/jobs/{{ job.id }}/resume/download" class="btn btn-primary btn-sm">Download Word</a>
+            <a href="/jobs/{{ job.id }}/resume/download/pdf" class="btn btn-secondary btn-sm">Download PDF</a>
+        </div>
     </div>
     <pre class="mt-1">{{ job.tailored_resume }}</pre>
 </div>
@@ -67,7 +70,10 @@
 <div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center;">
         <h3>Cover Letter</h3>
-        <a href="/jobs/{{ job.id }}/cover-letter/download" class="btn btn-primary btn-sm">Download Word</a>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+            <a href="/jobs/{{ job.id }}/cover-letter/download" class="btn btn-primary btn-sm">Download Word</a>
+            <a href="/jobs/{{ job.id }}/cover-letter/download/pdf" class="btn btn-secondary btn-sm">Download PDF</a>
+        </div>
     </div>
     <pre class="mt-1">{{ job.cover_letter }}</pre>
 </div>

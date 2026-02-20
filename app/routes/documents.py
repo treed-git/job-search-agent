@@ -6,6 +6,7 @@ import logging
 import re
 from pathlib import Path
 
+import fitz
 from docx import Document as DocxDocument
 from docx.shared import Pt, Inches
 from fastapi import APIRouter, Request
@@ -133,6 +134,69 @@ def _safe_filename(text: str) -> str:
     return re.sub(r"[^a-zA-Z0-9_-]", "_", text)[:60]
 
 
+def _build_pdf(text: str, title: str) -> io.BytesIO:
+    """Convert plain/markdown-like text into a basic PDF document."""
+    pdf = fitz.open()
+    page = pdf.new_page(width=612, height=792)  # US Letter
+
+    margin = 54
+    page_width = page.rect.width
+    page_height = page.rect.height
+    content_width = page_width - (2 * margin)
+    y = margin
+
+    title_height = 24
+    title_rect = fitz.Rect(margin, y, page_width - margin, y + title_height)
+    page.insert_textbox(title_rect, title, fontsize=16, fontname="helv", align=0)
+    y += title_height + 12
+
+    for raw_line in text.splitlines():
+        line = raw_line.strip()
+        if not line:
+            y += 8
+            continue
+
+        if line.startswith("### "):
+            line = line[4:]
+            fontsize = 12
+        elif line.startswith("## "):
+            line = line[3:]
+            fontsize = 13
+        elif line.startswith("# "):
+            line = line[2:]
+            fontsize = 14
+        elif line.startswith(("- ", "* ", "• ")):
+            line = f"• {line[2:]}"
+            fontsize = 11
+        else:
+            line = re.sub(r"\*\*(.+?)\*\*", r"\1", line)
+            fontsize = 11
+
+        if re.fullmatch(r"[-=_*]{3,}", line):
+            continue
+
+        rect = fitz.Rect(margin, y, margin + content_width, y + 200)
+        required = page.insert_textbox(rect, line, fontsize=fontsize, fontname="helv", align=0)
+
+        while required < 0:
+            page = pdf.new_page(width=612, height=792)
+            y = margin
+            rect = fitz.Rect(margin, y, margin + content_width, y + 200)
+            required = page.insert_textbox(rect, line, fontsize=fontsize, fontname="helv", align=0)
+
+        consumed_height = 200 + required
+        y += max(consumed_height + 4, fontsize + 6)
+
+        if y > page_height - margin - 40:
+            page = pdf.new_page(width=612, height=792)
+            y = margin
+
+    buf = io.BytesIO(pdf.tobytes())
+    buf.seek(0)
+    pdf.close()
+    return buf
+
+
 @router.get("/jobs/{job_id}/resume/download")
 async def download_resume(job_id: int):
     """Download tailored resume as a Word document."""
@@ -149,6 +213,22 @@ async def download_resume(job_id: int):
     )
 
 
+@router.get("/jobs/{job_id}/resume/download/pdf")
+async def download_resume_pdf(job_id: int):
+    """Download tailored resume as a PDF document."""
+    job = await get_job(job_id)
+    if not job or not job.tailored_resume:
+        return RedirectResponse(f"/jobs/{job_id}", status_code=302)
+
+    filename = f"Resume_{_safe_filename(job.company)}_{_safe_filename(job.title)}.pdf"
+    buf = _build_pdf(job.tailored_resume, f"Resume - {job.title}")
+    return StreamingResponse(
+        buf,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
 @router.get("/jobs/{job_id}/cover-letter/download")
 async def download_cover_letter(job_id: int):
     """Download cover letter as a Word document."""
@@ -161,5 +241,21 @@ async def download_cover_letter(job_id: int):
     return StreamingResponse(
         buf,
         media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
+@router.get("/jobs/{job_id}/cover-letter/download/pdf")
+async def download_cover_letter_pdf(job_id: int):
+    """Download cover letter as a PDF document."""
+    job = await get_job(job_id)
+    if not job or not job.cover_letter:
+        return RedirectResponse(f"/jobs/{job_id}", status_code=302)
+
+    filename = f"Cover_Letter_{_safe_filename(job.company)}_{_safe_filename(job.title)}.pdf"
+    buf = _build_pdf(job.cover_letter, f"Cover Letter - {job.title}")
+    return StreamingResponse(
+        buf,
+        media_type="application/pdf",
         headers={"Content-Disposition": f'attachment; filename="{filename}"'},
     )
