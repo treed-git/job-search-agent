@@ -4,11 +4,6 @@
 {% block content %}
 <h2 class="mb-2">My Resume</h2>
 
-<!-- Debug: remove after confirming fix -->
-<div class="card" style="background:#fef9c3;border-color:#fde68a;font-size:0.8rem;">
-    <p style="color:#92400e;">Debug: has_resume={{ has_resume }}, resume_name={{ resume.name if resume else 'None' }}, server=patched-v3</p>
-</div>
-
 {% if message %}
 <div class="card" style="background:#dcfce7;border-color:#bbf7d0;">
     <p style="color:#166534;">{{ message }}</p>
@@ -51,6 +46,13 @@
         <div class="mt-2">
             <strong>Summary</strong>
             <p class="text-sm mt-1">{{ resume.summary }}</p>
+        </div>
+        {% endif %}
+
+        {% if resume.raw_text %}
+        <div class="mt-2">
+            <strong>Original Resume Text (Imported As-Is)</strong>
+            <pre class="text-sm mt-1" style="white-space:pre-wrap;background:var(--bg);padding:0.75rem;border-radius:6px;max-height:24rem;overflow:auto;">{{ resume.raw_text }}</pre>
         </div>
         {% endif %}
 

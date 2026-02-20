@@ -38,6 +38,7 @@ class Resume(BaseModel):
     phone: str = ""
     location: str = ""
     summary: str = ""
+    raw_text: str = ""
     experience: list[Experience] = []
     education: list[Education] = []
     skills: list[str] = []
