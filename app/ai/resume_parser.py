@@ -23,6 +23,7 @@ and return ONLY valid JSON (no markdown, no explanation) matching this exact sch
   "phone": "",
   "location": "",
   "summary": "",
+  "raw_text": "",
   "experience": [
     {
       "title": "",
@@ -47,6 +48,8 @@ and return ONLY valid JSON (no markdown, no explanation) matching this exact sch
 
 Rules:
 - Extract ALL experience entries, education, and skills from the resume.
+- Preserve wording from the resume verbatim whenever possible; do not summarize or paraphrase bullets.
+- Set "raw_text" to the full unmodified resume text exactly as provided.
 - For dates, use formats like "2022-01" or "Present".
 - If a field isn't found, use an empty string or empty list.
 - Return ONLY the JSON object, nothing else.\
@@ -98,8 +101,7 @@ async def parse_resume_with_ai(raw_text: str) -> Resume:
             {"role": "system", "content": EXTRACT_PROMPT},
             {"role": "user", "content": raw_text},
         ],
-        temperature=0.1,
-        max_tokens=3000,
+        temperature=0.0,
     )
 
     content = response.choices[0].message.content or "{}"
@@ -112,15 +114,17 @@ async def parse_resume_with_ai(raw_text: str) -> Resume:
     content = content.strip()
 
     data = json.loads(content)
+    data.setdefault("raw_text", raw_text)
     return Resume(**data)
 
 
 def _fallback_parse(raw_text: str) -> Resume:
-    """Basic fallback: just stores the raw text as the summary."""
+    """Basic fallback: preserve raw resume text without truncation."""
     lines = [line.strip() for line in raw_text.split("\n") if line.strip()]
     return Resume(
         name=lines[0] if lines else "",
-        summary=raw_text[:500],
+        summary="",
+        raw_text=raw_text,
         skills=[],
     )
 
